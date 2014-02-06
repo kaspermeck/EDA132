@@ -87,6 +87,13 @@ class Board(object):
       return self.black
     raise Exception("Trying to get opposite color for an invalid color.")
 
+  def canMakeMove(self, color):
+    for y in xrange(8):
+      for x in xrange(8):
+        if isLegal(y, x, color):
+          return True
+    return False
+
   def printBoard(self):
     res = "";
     for y in range(8):
