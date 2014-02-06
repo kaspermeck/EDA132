@@ -49,7 +49,7 @@ class Board(object):
     self.grid[4][4] = self.white
 
   def isLegal(self, y, x, color):
-    if self.isLegalCoordinate(y, x) and color in self.colors and grid[y][x] == Board.empty:
+    if self.isLegalCoordinate(y, x) and color in self.colors and self.grid[y][x] == Board.empty:
       # Serach for a match in all directions
       for i in xrange(8):
         if self.isLegalInDirection(y, x, color, self.directions[i]):
