@@ -3,10 +3,10 @@ class Board(object):
   empty = "empty"
   black = "black"
   white = "white"
-  colors = [black, white]
+  colors = (black, white)
   
   # Direction modifiers
-  directions = [
+  directions = (
     (-1,  0), # north
     (-1,  1), # northeast
     ( 0,  1), # east
@@ -15,7 +15,7 @@ class Board(object):
     ( 1, -1), # southwest 
     ( 0, -1), # west
     (-1, -1)  # northwest
-  ]
+  )
 
   def __init__(self):
     self.clear()
@@ -49,7 +49,7 @@ class Board(object):
     self.grid[4][4] = self.white
 
   def isLegal(self, y, x, color):
-    if self.isLegalCoordinate(y, x) and color in self.colors:
+    if self.isLegalCoordinate(y, x) and color in self.colors and grid[y][x] == Board.empty:
       # Serach for a match in all directions
       for i in xrange(8):
         if self.isLegalInDirection(y, x, color, self.directions[i]):
@@ -92,7 +92,7 @@ class Board(object):
     for y in range(8):
       for x in range(8):
         if self.grid[y][x] == self.empty:
-          res += "_ "
+          res += "- "
         elif self.grid[y][x] == self.black:
           res += "x "
         elif self.grid[y][x] == self.white:
