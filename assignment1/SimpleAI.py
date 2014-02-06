@@ -13,6 +13,6 @@ class SimpleAI(object):
     for y in xrange(8):
       for x in xrange(8):
         if board.isLegal(y, x, color):
-          self.moves.append(y, x)
+          self.moves.append((y, x))
 
-    return choice(moves)
+    return choice(self.moves)

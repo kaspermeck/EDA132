@@ -90,7 +90,7 @@ class Board(object):
   def canMakeMove(self, color):
     for y in xrange(8):
       for x in xrange(8):
-        if isLegal(y, x, color):
+        if self.isLegal(y, x, color):
           return True
     return False
 
