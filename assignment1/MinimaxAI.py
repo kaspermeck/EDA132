@@ -7,27 +7,28 @@ class MinimaxAI(object):
     self.aicolor = color
 
   def getMove(self, board, color):
-    return getScoreMove(board, color).highest
+    return getScoreMove(board, color, 0, 3)
 
-  def getScoreMove(self, board, color):
+  def getScoreMove(self, board, color, depth, maxDepth):
     moves = []
     
-
     for y in xrange(8):
       for x in xrange(8):
-        moves.append(((y, x), score(y, x, color)))
+        if board.isLegal(y, x, color):
+          moves.append(((y, x), score(y, x, color)))
 
-    for i in moves:
-      b = copy.deepcopy(board)
-      b.place(*moves[i][0], color])
-      score = getScoreMove(b, Board.oppositeColor(color))
+    if depth < maxDepth:
+      for i in moves:
+        b = copy.deepcopy(board)
+        b.place(*moves[i][0], color])
+        score = getScoreMove(b, Board.oppositeColor(color), depth + 1, maxDepth)
       
-      if color == aicolor: # next level is opponent
-        moves[i][1] -= score 
-      else:
-        moves[i][1] += score
+        if color == aicolor: # next level is opponent
+          moves[i][1] -= score 
+        else:
+          moves[i][1] += score
 
-    return sorted(moves, key = lambda move: move[1])[0]
+    return sorted(moves, key = lambda move: move[1])[-1]
 
     
 
@@ -40,7 +41,7 @@ class MinimaxAI(object):
       (6,0),(7,1),(6,1)
     )
 
-    score = board.score()
+    score = board.scorediff(y, x, color)
     
     if (y,x) in corners:
       score += 20
