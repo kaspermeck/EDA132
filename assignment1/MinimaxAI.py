@@ -8,8 +8,8 @@ class MinimaxAI(object):
     self.aicolor = color
     self.board = board
 
-  def makeMove():
-    y, x = self.getMove(self.board, aicolor)
+  def makeMove(self):
+    y, x = self.getMove(self.board, self.aicolor)
     self.board.place(y, x, self.aicolor)
     return y, x
 

@@ -7,18 +7,19 @@ class Human(object):
 		self.GUIboard = GUIboard
 		self.board = board
 		self.color = color
+		self.sqs = 70
 
 
 	def makeMove(self):
-		while(True)
+		while(True):
 			for event in self.GUIboard.pygame.event.get():
 				if event.type == QUIT:
 					self.GUIboard.pygame.quit()
 					sys.exit()
 				elif event.type == MOUSEBUTTONUP:
 					x, y = event.pos
-					x /= sqs
-					y /= sqs
+					x /= self.sqs
+					y /= self.sqs
 					if self.board.isLegal(y, x, self.color):
 						self.board.place(y, x, self.color)
-						return x, y
+						return y,x

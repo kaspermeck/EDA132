@@ -3,16 +3,20 @@ from random import choice
 
 # SimpleAI places
 class SimpleAI(object):
-  def __init__(self):
-    pass
+  def __init__(self, board, color):
+    self.aicolor = color
+    self.board = board
 
-  def getMove(self, board, color):
-    self.board = copy.deepcopy(board)
-    self.moves = []
+  def makeMove(self):
+    y, x = self.getMove()
+    self.board.place(y, x, self.aicolor)
+    return y, x
 
+  def getMove(self):
+    moves = []
     for y in xrange(8):
       for x in xrange(8):
-        if board.isLegal(y, x, color):
-          self.moves.append((y, x))
+        if self.board.isLegal(y, x, self.aicolor):
+          moves.append((y, x))
 
-    return choice(self.moves)
+    return choice(moves)
