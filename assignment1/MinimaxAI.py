@@ -1,20 +1,32 @@
-import copy
+import copy, pygame
 from Board import *
+from pygame.locals import *
+from random import choice
 
 # SimpleAI places
 class MinimaxAI(object):
 
-  def __init__(self, board, color):
+  def __init__(self, gui, board, color):
     self.aicolor = color
     self.board = board
+    self.gui = gui
 
   def makeMove(self):
+    print self.aicolor, "MinimaxAI player is thinking..."
     y, x = self.getMove(self.board, self.aicolor)
     self.board.place(y, x, self.aicolor)
+    
+    #a = True
+    #while a:
+    #  for event in self.gui.pygame.event.get():
+    #    if event.type == MOUSEBUTTONUP:
+    #      a = False
+
+    print "Chose location", y, x, "\n"
     return y, x
 
   def getMove(self, board, color):
-    return self.getScoreMove(board, color, 0, 3)[0]
+    return self.getScoreMove(board, color, 0, 2)[0]
 
   def getScoreMove(self, board, color, depth, maxDepth):
     moves = []
@@ -22,29 +34,36 @@ class MinimaxAI(object):
     for y in xrange(8):
       for x in xrange(8):
         if board.isLegal(y, x, color):
-          moves.append([(y, x), self.score(board, y, x, color)])
+          score = self.score(board, y, x, color)
+          score *= (-1) if color != self.aicolor else 1
+          moves.append([(y, x), score])
 
     if depth < maxDepth:
       for move in moves:
         b = copy.deepcopy(board)
         b.place(move[0][0], move[0][1], color)
-        score = self.getScoreMove(b, Board.oppositeColor(color), depth + 1, maxDepth)
+        m = self.getScoreMove(b, Board.oppositeColor(color), depth + 1, maxDepth)
 
-        if not score: # opponent can make no move, good? (note negation)
-          score = -1000  
+        if not m: # can make no move, good? (note negation)
+          move[1] += 1000 if color == self.aicolor else -1000
         else:
-          score = score[1]
-      
-        if color == self.aicolor: # next level is opponent, therefor minus
-          move[1] -= score 
-        else:
-          move[1] += score
+          move[1] += m[-1]
+        # felet var att vi vander tecken pa hela stack-scoren och inte bara dragets
+        # score
 
-    # Sort by score, return last element (highest score)
+    # Print
+    #print depth, " -> possible moves:"
+    #for move in moves:
+    #  print move
+
+    # Return max/min
     if not moves:
       return []
     else:
-      return sorted(moves, key = lambda move: move[1])[-1]
+      if color == self.aicolor:
+        return sorted(moves, key = lambda move: move[1])[-1] #max
+      else:
+        return sorted(moves, key = lambda move: move[1])[0] #min
 
     
 
