@@ -49,7 +49,7 @@ while True:
 			boolHuman = board.canMakeMove(Board.black)
 			boolAI = board.canMakeMove(Board.white)
 			if not boolHuman and not boolAI:
-				print 'gg'
+				print board.score()
 			if currentPlayer==human and boolHuman:
 				x, y = event.pos
 				x /= sqs
