@@ -4,8 +4,14 @@ from Board import *
 # SimpleAI places
 class MinimaxAI(object):
 
-  def __init__(self, color):
+  def __init__(self, board, color):
     self.aicolor = color
+    self.board = board
+
+  def makeMove():
+    y, x = self.getMove(self.board, aicolor)
+    self.board.place(y, x, self.aicolor)
+    return y, x
 
   def getMove(self, board, color):
     return self.getScoreMove(board, color, 0, 3)[0]
