@@ -10,9 +10,9 @@ fpsClock = pygame.time.Clock()
 
 # Load game mechanics
 board = Board()
-ai = MinimaxAI(Board.white) # replace with ai-object ai = AI(board)
-human = "human"
-currentPlayer = human
+whitePlayer = Human(self, board, Board.white)
+blackPlayer = MinimaxAI(board, Board.black)
+currentPlayer = blackPlayer
 
 # Setup screen
 black = pygame.Color(0, 0, 0)
@@ -42,33 +42,21 @@ while True:
 				pygame.draw.circle(screen, white, (x*sqs+sqs/2, y*sqs+sqs/2), sqs/2, 0)
 
 	# Handle actions
-	for event in pygame.event.get():
-		if event.type == QUIT:
-			pygame.quit()
-			sys.exit()
-		elif event.type == MOUSEBUTTONUP:
-			boolHuman = board.canMakeMove(Board.black)
-			boolAI = board.canMakeMove(Board.white)
-			if not boolHuman and not boolAI:
-				print board.score()
-			if currentPlayer==human and boolHuman:
-				x, y = event.pos
-				x /= sqs
-				y /= sqs
-				print "Clicked at", y, x
-				
-				if board.isLegal(y, x, Board.black):
-					board.place(y, x, Board.black)
-					currentPlayer = ai
-			elif currentPlayer==human and not boolHuman:
-				currentPlayer = ai
-			elif currentPlayer==ai and boolAI:
-				y, x = ai.getMove(board, Board.white)
-				board.place(y, x, Board.white)
-				print "AI clicked at", y, x
-				currentPlayer = human
-			elif currentPlayer==ai and not boolAI:
-				currentPlayer = human
+	canWhite = board.canMakeMove(Board.white)
+	canBlack = board.canMakeMove(Board.black)
 
+	if not canWhite and not canBlack:
+		print board.score()
+	if currentPlayer == whitePlayer and canWhite:
+		whitePlayer.makeMove()
+		currentPlayer = blackPlayer
+	elif currentPlayer == whitePlayer and not canWhite:
+		currentPlayer = blackPlayer
+	elif currentPlayer == blackPlayer and canBlack:
+		blackPlayer.makeMove()
+		currentPlayer = blackPlayer
+	elif currentPlayer == blackPlayer and not canBlack:
+		currentPlayer = blackPlayer
+	
 	pygame.display.update()
 	fpsClock.tick(30)
