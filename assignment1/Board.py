@@ -38,7 +38,7 @@ class Board(object):
           y += self.directions[i][0]
           x += self.directions[i][1]
 
-          while self.grid[y][x] == self.oppositeColor(color):
+          while self.grid[y][x] == Board.oppositeColor(color):
             self.grid[y][x] = color
             y += self.directions[i][0]
             x += self.directions[i][1]
@@ -50,14 +50,23 @@ class Board(object):
       for x in range(8):
         if self.grid[y][x] == self.white:
           wscore += 1
-        if self.grid[y][x] == self.black:
+        elif self.grid[y][x] == self.black:
           bscore += 1
-    return wscore, bscore
+        else:
+          pass
+    return bscore, wscore
 
   def scorediff(self, y, x, color):
-    boardcopy = copy.deepcopy(self.grid)
-    boardcopy.place(y,x,color)
-    return boardcopy.score() - self.score()
+    boardcopy = copy.deepcopy(self)
+    boardcopy.place(y, x, color)
+    
+    if color == Board.black:
+      return boardcopy.score()[0] - self.score()[0]
+    elif color == Board.white:
+      return boardcopy.score()[1] - self.score()[1]
+    else:
+      raise Exception("Invalid color.")
+      
 
   def clear(self): 
     self.grid = [[self.empty for x in xrange(8)] for x in xrange(8)]
@@ -67,7 +76,7 @@ class Board(object):
     self.grid[4][4] = self.white
 
   def isLegal(self, y, x, color):
-    if self.isLegalCoordinate(y, x) and color in self.colors and self.grid[y][x] == Board.empty:
+    if Board.isLegalCoordinate(y, x) and color in self.colors and self.grid[y][x] == Board.empty:
       # Serach for a match in all directions
       for i in xrange(8):
         if self.isLegalInDirection(y, x, color, self.directions[i]):
@@ -80,12 +89,12 @@ class Board(object):
 
   # Assumed (y, x) is a legal coordinate
   def isLegalInDirection(self, y, x, color, direction):
-    oColor = self.oppositeColor(color)
+    oColor = Board.oppositeColor(color)
     y += direction[0]
     x += direction[1]
     offset = 1
        
-    while self.isLegalCoordinate(y, x):
+    while Board.isLegalCoordinate(y, x):
       if self.grid[y][x] == self.empty:
         return False
       if self.grid[y][x] == color: 
@@ -95,14 +104,16 @@ class Board(object):
         x += direction[1]
         offset += 1
 
-  def isLegalCoordinate(self, y, x):
+  @staticmethod
+  def isLegalCoordinate(y, x):
     return x in range(8) and y in range(8)
 
-  def oppositeColor(self, color):
-    if color == self.black:
-      return self.white
-    if color == self.white:
-      return self.black
+  @staticmethod
+  def oppositeColor(color):
+    if color == Board.black:
+      return Board.white
+    if color == Board.white:
+      return Board.black
     raise Exception("Trying to get opposite color for an invalid color.")
 
   def canMakeMove(self, color):

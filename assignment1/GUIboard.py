@@ -2,6 +2,7 @@ import pygame, sys, time
 from pygame.locals import *
 from Board import Board
 from SimpleAI import SimpleAI
+from MinimaxAI import MinimaxAI
 
 # Load pygame
 pygame.init()
@@ -9,7 +10,7 @@ fpsClock = pygame.time.Clock()
 
 # Load game mechanics
 board = Board()
-ai = SimpleAI() # replace with ai-object ai = AI(board)
+ai = MinimaxAI(Board.white) # replace with ai-object ai = AI(board)
 human = "human"
 currentPlayer = human
 
