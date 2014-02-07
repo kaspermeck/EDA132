@@ -12,9 +12,9 @@ class GUIboard(object):
 		self.pygame.init()
 		self.fpsClock = pygame.time.Clock()
 		self.board = Board()
-		#self.whitePlayer = Human(self, self.board, Board.white)
-		self.whitePlayer = MinimaxAI(self.board, Board.white)
-		self.blackPlayer = SimpleAI(self.board, Board.black)
+		self.whitePlayer = SimpleAI(self.board, Board.white)
+		#self.whitePlayer = MinimaxAI(self.board, Board.white)
+		self.blackPlayer = MinimaxAI(self, self.board, Board.black)
 		self.currentPlayer = self.blackPlayer
 		self.screen = self.drawscreen()
 
@@ -26,6 +26,7 @@ class GUIboard(object):
 		tit = 'Othello ala Linus och Kasper!'
 		pygame.display.set_caption(tit)
 		pygame.mouse.set_visible(True)
+		self.myfont = self.pygame.font.SysFont("monospace", 20)
 		return screen
 
 	def updatescreen(self):
@@ -40,6 +41,10 @@ class GUIboard(object):
 				# Draw black background squares
 				self.pygame.draw.rect(self.screen, black, (y*sqs, x*sqs, sqs, sqs), 2)
 				
+				# Draw coordinate
+				label = self.myfont.render("("+str(y)+","+str(x)+")", 1, (0,0,0))
+				self.screen.blit(label, (x*sqs+5, y*sqs+5))
+
 				# Draw disks
 				if self.board.grid[y][x] == Board.black:
 					self.pygame.draw.circle(self.screen, black, (x*sqs+sqs/2, y*sqs+sqs/2), sqs/2, 0)
@@ -58,21 +63,19 @@ class GUIboard(object):
 			canBlack = self.board.canMakeMove(Board.black)
 
 			if not canWhite and not canBlack:
-				#print board.score()
-				#self.pygame.quit()
-				#sys.exit()
-				pass
+				print "Score (black, white):", self.board.score()
+				while True:
+					for event in self.pygame.event.get():
+						if event.type == QUIT:
+							self.pygame.quit()
+							sys.exit()
 			elif self.currentPlayer == self.whitePlayer and canWhite:
-				print 'white turn'
 				y,x = self.whitePlayer.makeMove()
-				print y,x
 				self.currentPlayer = self.blackPlayer
 			elif self.currentPlayer == self.whitePlayer and not canWhite:
 				self.currentPlayer = self.blackPlayer
 			elif self.currentPlayer == self.blackPlayer and canBlack:
-				print 'black turn'
 				y,x = self.blackPlayer.makeMove()
-				print y,x
 				self.currentPlayer = self.whitePlayer
 			elif self.currentPlayer == self.blackPlayer and not canBlack:
 				self.currentPlayer = self.whitePlayer
