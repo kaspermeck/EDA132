@@ -1,3 +1,5 @@
+import copy
+
 class Board(object):
   # Colors
   empty = "empty"
@@ -40,6 +42,22 @@ class Board(object):
             self.grid[y][x] = color
             y += self.directions[i][0]
             x += self.directions[i][1]
+  
+  def score(self):
+    wscore = 0
+    bscore = 0
+    for y in range(8):
+      for x in range(8):
+        if self.grid[y][x] == self.white:
+          wscore += 1
+        if self.grid[y][x] == self.black:
+          bscore += 1
+    return wscore, bscore
+
+  def scorediff(self, y, x, color):
+    boardcopy = copy.deepcopy(self.grid)
+    boardcopy.place(y,x,color)
+    return boardcopy.score() - self.score()
 
   def clear(self): 
     self.grid = [[self.empty for x in xrange(8)] for x in xrange(8)]
