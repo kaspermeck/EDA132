@@ -13,80 +13,19 @@ class MinimaxAI(object):
 
   def makeMove(self):
     print self.aicolor, "MinimaxAI player is thinking..."
-    y, x = self.getMove(self.board, self.aicolor)
+    y, x = self.minimax(self.board, self.aicolor)
     self.board.place(y, x, self.aicolor)
-    
-    #a = True
-    #while a:
-    #  for event in self.gui.pygame.event.get():
-    #    if event.type == MOUSEBUTTONUP:
-    #      a = False
-
+    """   
+    a = True
+    while a:
+      for event in self.gui.pygame.event.get():
+        if event.type == MOUSEBUTTONUP:
+          a = False
+    """
     print "Chose location", y, x, "\n"
     return y, x
 
-  def getMove(self, board, color):
-    # Always do the first depth, regardless off timelimit
-    bestmost = self.getScoreMove(board, color, 0, 0)
-
-    # Iterative deepening. Never deeper than 10 however.
-    self.starttime = time.time()
-    for maxDepth in range(1,10):
-      move = self.getScoreMove(board, color, 0, maxDepth)
-
-      if move == "cutoff":
-        print "Broke off during depth", maxDepth
-        break
-      else:
-        bestmove = move[0]
-
-    # Return the best move
-    return bestmove
-
-  def getScoreMove(self, board, color, depth, maxDepth):
-    moves = []
-    
-    for y in xrange(8):
-      for x in xrange(8):
-        # cutoff check
-        if board.isLegal(y, x, color):
-          score = self.score(board, y, x, color)
-          score *= (-1) if color != self.aicolor else 1
-          moves.append([(y, x), score])
-
-    if depth < maxDepth:
-      for move in moves:
-        if time.time() - self.starttime > self.maxtime:
-          return "cutoff"
-
-        b = copy.deepcopy(board)
-        b.place(move[0][0], move[0][1], color)
-        m = self.getScoreMove(b, Board.oppositeColor(color), depth + 1, maxDepth)
-
-        if not m: # If the move list is empty, no move can be made, this is very good/bad.
-          move[1] += 1000 if color == self.aicolor else -1000
-        elif m == "cutoff":
-          return m
-        else:
-          move[1] += m[-1]
-
-    # Print
-    #print depth, " -> possible moves:"
-    #for move in moves:
-    #  print move
-
-    # Return max/min
-    if not moves:
-      return []
-    else:
-      if color == self.aicolor:
-        return sorted(moves, key = lambda move: move[1])[-1] #max
-      else:
-        return sorted(moves, key = lambda move: move[1])[0] #min
-
-    
-
-  def score(self, board, y, x, color):
+  def scr(self, board, color):
     corners = ((0,0),(7,7),(0,7),(7,0))
     next_to_corners = (
       (0,1),(1,0),(1,1),
@@ -95,18 +34,125 @@ class MinimaxAI(object):
       (6,0),(7,1),(6,1)
     )
 
-    scoreboard = [
-      [99, - 8,  8,  6,  6,  8, - 8, 99],
-      [-8, -24, -4, -3, -3, -4, -24, -8],
+    square_weights = [
+      [99, -24,  8,  6,  6,  8, -24, 99],
+      [-24, -24, -4, -3, -3, -4, -24,-24],
       [ 8, - 4,  7,  4,  4,  7, - 4,  8],
       [ 6, - 3,  4,  0,  0,  4, - 3,  6],
       [ 6, - 3,  4,  0,  0,  4, - 3,  6],
       [ 8, - 4,  7,  4,  4,  7, - 4,  8],
-      [-8, -24, -4, -3, -3, -4, -24, -8],
-      [99, - 8,  8,  6,  6,  8, - 8, 99]
+      [-24, -24, -4, -3, -3, -4, -24,-24],
+      [99, -24,  8,  6,  6,  8, -24, 99]
     ]
 
-    score = board.scorediff(y, x, color)
-    score += scoreboard[y][x]
+    bscr, wscr = board.score()
+    scr = bscr-wscr if color == Board.black else wscr-bscr
 
-    return score
+    for y in xrange(8):
+      for x in xrange(8):
+        if board.grid[y][x] == color:
+          scr += square_weights[y][x]
+        elif board.grid[y][x] == Board.oppositeColor(color):
+          scr -= square_weights[y][x]
+
+    if color != self.aicolor:
+      scr *= -1
+
+    return scr
+
+  def minimax(self, board, color):
+    # Always do the first depth, regardless off time limit
+    best_move = []
+    self.starttime = time.time()
+    
+    # Iterative deepening. Never deeper than 10 however.
+    for depth in range(10):
+      move = self.maxValue(board, color, depth)
+
+      if move == "cutoff":
+        print "Broke off during depth", depth, "hence the computed depth is", (depth-1)
+        break
+      else:
+        best_move = move
+    
+    # Return the best move
+    print "Time passed:", time.time() - self.starttime
+    return best_move[0]
+
+  def allMoves(self, board, color):
+    moves = []
+    
+    for y in xrange(8):
+      for x in xrange(8):
+        if board.isLegal(y, x, color):
+          moves.append([(y, x)])
+
+    return moves
+
+  def maxValue(self, board, color, depth):
+    moves = self.allMoves(board, color)
+
+    if not moves:
+      if color == self.aicolor:
+        return [0, -1000]
+      else:
+        return [0, 1000]
+    elif depth == 0:
+      for m in moves:
+        b = copy.deepcopy(board)
+        y, x, = m[0]
+        b.place(y, x, color)
+        m.append(self.scr(b, color))
+      
+      return max(moves, key = lambda move: move[1])
+    else:
+      for m in moves:
+        if time.time() - self.starttime > self.maxtime:
+          return "cutoff"
+
+        b = copy.deepcopy(board)
+        y, x, = m[0]
+        b.place(y, x, color)
+        scr = self.minValue(b, Board.oppositeColor(color), depth-1)
+
+        if scr == "cutoff":
+          return scr
+        else:
+          m.append(scr[1])
+
+      return max(moves, key = lambda move: move[1])
+
+  def minValue(self, board, color, depth):
+    moves = self.allMoves(board, color)
+
+    if not moves:
+      if color == self.aicolor:
+        return [0, 1000]
+      else:
+        return [0, -1000]
+    elif depth == 0:
+      for m in moves:
+        b = copy.deepcopy(board)
+        y, x, = m[0]
+        b.place(y, x, color)
+        m.append(self.scr(b, color))
+  
+      return min(moves, key = lambda move: move[1])
+    else:
+      for m in moves:
+        if time.time() - self.starttime > self.maxtime:
+          return "cutoff"
+
+        b = copy.deepcopy(board)
+        y, x = m[0]
+        b.place(y, x, color)
+        scr = self.maxValue(b, Board.oppositeColor(color), depth-1)
+
+        if scr == "cutoff":
+          return scr
+        else:
+          m.append(scr[1])
+  
+      return min(moves, key = lambda move: move[1])
+
+
