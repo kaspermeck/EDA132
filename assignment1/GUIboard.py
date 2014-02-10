@@ -12,9 +12,10 @@ class GUIboard(object):
 		self.pygame.init()
 		self.fpsClock = pygame.time.Clock()
 		self.board = Board()
-		self.whitePlayer = SimpleAI(self.board, Board.white)
-		#self.whitePlayer = MinimaxAI(self.board, Board.white)
-		self.blackPlayer = MinimaxAI(self, self.board, Board.black)
+	#	self.whitePlayer = SimpleAI(self.board, Board.white)
+		#self.whitePlayer = MinimaxAI(self.board, Board.wh)ite)
+		self.whitePlayer = Human(self, self.board, Board.white)
+		self.blackPlayer = MinimaxAI(self, self.board, Board.black, 3)
 		self.currentPlayer = self.blackPlayer
 		self.screen = self.drawscreen()
 

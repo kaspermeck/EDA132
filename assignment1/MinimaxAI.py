@@ -1,15 +1,15 @@
-import copy, pygame
+import copy, pygame, time
 from Board import *
 from pygame.locals import *
-from random import choice
 
 # SimpleAI places
 class MinimaxAI(object):
 
-  def __init__(self, gui, board, color):
+  def __init__(self, gui, board, color, timelimit):
     self.aicolor = color
     self.board = board
     self.gui = gui
+    self.maxtime = timelimit
 
   def makeMove(self):
     print self.aicolor, "MinimaxAI player is thinking..."
@@ -26,13 +26,29 @@ class MinimaxAI(object):
     return y, x
 
   def getMove(self, board, color):
-    return self.getScoreMove(board, color, 0, 2)[0]
+    # Always do the first depth, regardless off timelimit
+    bestmost = self.getScoreMove(board, color, 0, 0)
+
+    # Iterative deepening. Never deeper than 10 however.
+    self.starttime = time.time()
+    for maxDepth in range(1,10):
+      move = self.getScoreMove(board, color, 0, maxDepth)
+
+      if move == "cutoff":
+        print "Broke off during depth", maxDepth
+        break
+      else:
+        bestmove = move[0]
+
+    # Return the best move
+    return bestmove
 
   def getScoreMove(self, board, color, depth, maxDepth):
     moves = []
     
     for y in xrange(8):
       for x in xrange(8):
+        # cutoff check
         if board.isLegal(y, x, color):
           score = self.score(board, y, x, color)
           score *= (-1) if color != self.aicolor else 1
@@ -40,16 +56,19 @@ class MinimaxAI(object):
 
     if depth < maxDepth:
       for move in moves:
+        if time.time() - self.starttime > self.maxtime:
+          return "cutoff"
+
         b = copy.deepcopy(board)
         b.place(move[0][0], move[0][1], color)
         m = self.getScoreMove(b, Board.oppositeColor(color), depth + 1, maxDepth)
 
-        if not m: # can make no move, good? (note negation)
+        if not m: # If the move list is empty, no move can be made, this is very good/bad.
           move[1] += 1000 if color == self.aicolor else -1000
+        elif m == "cutoff":
+          return m
         else:
           move[1] += m[-1]
-        # felet var att vi vander tecken pa hela stack-scoren och inte bara dragets
-        # score
 
     # Print
     #print depth, " -> possible moves:"
