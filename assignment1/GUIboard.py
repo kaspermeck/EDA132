@@ -3,6 +3,7 @@ from pygame.locals import *
 from Board import Board
 from SimpleAI import SimpleAI
 from MinimaxAI import MinimaxAI
+from MinimaxAlphaBetaAI import MinimaxAlphaBetaAI
 from Human import Human
 
 class GUIboard(object):
@@ -14,8 +15,10 @@ class GUIboard(object):
 		self.board = Board()
 		self.whitePlayer = SimpleAI(self.board, Board.white, 0.5)
 		#self.whitePlayer = Human(self, self.board, Board.white)
-		#self.whitePlayer = MinimaxAI(self, self.board, Board.white, 3)
-		self.blackPlayer = MinimaxAI(self, self.board, Board.black, 5)
+		self.whitePlayer = MinimaxAI(self, self.board, Board.white, 3)
+		#self.whitePlayer = MinimaxAlphaBetaAI(self, self.board, Board.white, 3)
+		self.blackPlayer = MinimaxAI(self, self.board, Board.black, 3)
+		#self.blackPlayer = MinimaxAlphaBetaAI(self, self.board, Board.black, 3)
 		self.currentPlayer = self.blackPlayer
 		self.screen = self.drawscreen()
 
