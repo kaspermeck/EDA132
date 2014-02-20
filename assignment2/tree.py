@@ -1,6 +1,7 @@
 class Node(object):
   def __init__(self):
     self.children = []
+    self.value = ""
 
   def addChild(self, node):
     self.children.append(node)
