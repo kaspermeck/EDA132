@@ -1,9 +1,10 @@
 from readARFF import readARFF
-from Importance import importance
+from DLT import DLT
+
+
 
 if __name__ == "__main__":
   dataset = readARFF("weather.arff")
-  gain1 = importance(dataset, "outlook")
-  gain2 = importance(dataset, "windy")
-  print gain1, gain2
-
+  tree = DLT(dataset,dataset)
+  print tree
+  
