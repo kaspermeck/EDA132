@@ -35,6 +35,7 @@ def importance(dataset, attr):
           else:
             neg += 1
       # Subtract the gain if we had any attr_value assigned in the dataset
+      # print "Got pos =", pos, "and neg =", neg, "for", attr_value
       if pos+neg > 0:
         gain -= (pos+neg)/size * Bfunc(pos/(pos+neg))
 

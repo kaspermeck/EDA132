@@ -25,11 +25,11 @@ def readARFF(filename):
 	badChars = ['{', '}', ',']
 
 	for line in content:
+		line = line.lower()
 		if not line.strip():
 			# do nothing
 			pass
 		elif not readData:
-			line = line.lower()
 			line = ''.join(i for i in line if i not in badChars)
 			lineSplit = line.split()
 			if lineSplit[0] == '@relation':
@@ -55,7 +55,7 @@ def readARFF(filename):
 			allData.append(tuple(dataLine))
 
 	# associate keyword with value
-	dataSet.update({'attribute': allAttr})
+	dataSet.update({'attributes': allAttr})
 	dataSet.update({'data': allData})
 
 	return dataSet
