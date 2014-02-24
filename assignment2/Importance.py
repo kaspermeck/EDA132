@@ -16,7 +16,7 @@ ex_dataset = {'relation':   "weather",
 def importance(dataset, attr):
   gain = False
   size = len(dataset['data'])
-  yes_values = [True, 1, "yes", "ja", "true", "TRUE", "True"]
+  yes_values = [True, 1, "yes", "ja", "true", "TRUE", "True", "democrat"]
 
   for attr_pos, (attr_name, attr_values) in enumerate(dataset['attributes']):
     # Check if the current attribute is the one we want to compute gain for

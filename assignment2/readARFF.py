@@ -22,12 +22,14 @@ def readARFF(filename):
 	allAttr = []
 	allData = []
 	# unwanted symbols
-	badChars = ['{', '}', ',']
+	badChars = ['{', '}', ',', "'"]
 
 	for line in content:
 		line = line.lower()
 		if not line.strip():
 			# do nothing
+			pass
+		elif line.startswith('%'):
 			pass
 		elif not readData:
 			line = ''.join(i for i in line if i not in badChars)
