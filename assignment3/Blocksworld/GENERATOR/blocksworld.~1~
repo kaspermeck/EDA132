@@ -1,0 +1,20 @@
+#! /usr/local/gnu/bin/bash
+
+
+#########################################################
+#
+#########################################################
+
+
+BS=./GENERATOR/bwstates.1/bwstates
+
+TR=./GENERATOR/2pddl/2pddl
+
+
+
+$BS -s 2 -n $1 > STATES
+$TR -d STATES -n $1 
+
+rm STATES
+
+
