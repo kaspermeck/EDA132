@@ -1,7 +1,6 @@
 (define (domain tyreworld)
   (:types obj - object
-	  tool wheel nut - obj
-	  container hub - object)
+	  tool wheel nut container hub - obj)
 (:predicates (open ?x)
              (closed ?x)
              (have ?x)
