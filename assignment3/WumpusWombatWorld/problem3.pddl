@@ -2,7 +2,7 @@
 
 	(:domain wumpusworld)
 
-	(:objects
+	(:objects 
 		right up left down - direction
 	)
 
@@ -15,3 +15,5 @@
 	)
 
 )
+
+
