@@ -1,43 +1,72 @@
+; Vi kan inte gå in i en ruta där vi inte vet vad det är.
+; (ty då skulle vi kunna dö - och plannern hade kunnat springa 
+; igenom planen genom att testa var den dör och då inte ta den
+; vägen (dvs vi tar bort hela poängen med spelet))
+;
+; Därför måste vi ha någon slags 'known/safe' variabel
+;
+;
+
 (define (domain wumpusworld)
 	(:requirements :strips)
-	(:types	obj - object
-		direction square - obj
+	(:types
+		worldobj   ;assumed we got agent
+		direction  ;assumed we got north, west, wouth, east
+		square
+		wumpus pit gold stench breeze - worldobj
 	)
 
 	(:predicates
-		(dead)
+		(sqr-north-of ?sqr ?nsqr)
+		(sqr-west-of  ?sqr ?wsqr)
+		(sqr-south-of ?sqr ?ssqr)
+		(sqr-east-of  ?sqr ?esqr)
+		(safe ?sqr)
+		(maybe-in ?obj ?sqr)
 		(facing ?dir)
-		(position ?square)
-		;vilket som är vilken granne beror på facing
-		;(neighbor ?sq1 ?sq2)
+		(in ?obj ?sqr)
 	)
 
+	(:action forward
+		:parameters (
+			?insqr - square
+			?tosqr - square
+		)
+		:precondition (and
+			(in agent ?insqr)
+			(or
+				(and (facing north) (sqr-north-of ?tosqr ?insqr))
+				(and (facing west)  (sqr-west-of  ?tosqr ?insqr))
+				(and (facing south) (sqr-south-of ?tosqr ?insqr))
+				(and (facing east)  (sqr-east-of  ?tosqr ?insqr))
+			)
+		)
+		:effect (and
+			;move
+			(in agent ?tosqr)
+			(not (in agent ?insqr))
+
+			;add to maybe in's
+		)
+	)
 
 	(:action turnleft
-		:precondition (not (dead))
-		:effect (and  
-			(when (facing right) 	(and (facing up)    (not (facing right))) )
-			(when (facing up) 	(and (facing left)  (not (facing up)))    )
-			(when (facing left)	(and (facing down)  (not (facing left)))  )
-			(when (facing down)	(and (facing right) (not (facing down)))  )
+		:effect (and
+			(when (facing north) (and (facing west)  (not (facing north))))
+			(when (facing west)  (and (facing south) (not (facing west) )))
+			(when (facing south) (and (facing east)  (not (facing south))))
+			(when (facing east)  (and (facing north) (not (facing east) )))
 		)
 	)
 
 	(:action turnright
-		:precondition (not (dead))
-		:effect (and  
-			(when (facing right) 	(and (facing down)    (not (facing right))) )
-			(when (facing up) 	(and (facing right)  (not (facing up)))    )
-			(when (facing left)	(and (facing up)  (not (facing left)))  )
-			(when (facing down)	(and (facing left) (not (facing down)))  )
+		:effect (and
+			(when (facing north) (and (facing east)  (not (facing north))))
+			(when (facing west)  (and (facing north) (not (facing west) )))
+			(when (facing south) (and (facing west)  (not (facing south))))
+			(when (facing east)  (and (facing south) (not (facing east) )))
 		)
 	)
 
-;	(:action move
-;		:precondition(not (dead))
-;		:effect (and
-;
-;		)
-;	)
 )
 
