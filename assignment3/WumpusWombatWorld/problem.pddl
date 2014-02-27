@@ -4,6 +4,7 @@
 
 	(:objects
 		right up left down - direction
+		sq-1-1 sq-2-1 - position
 	)
 
 	(:init
@@ -11,7 +12,6 @@
 	)
 
 	(:goal
-		(facing down)
+		(facing left)
 	)
-
 )
