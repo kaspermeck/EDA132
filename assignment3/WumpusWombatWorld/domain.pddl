@@ -13,18 +13,19 @@
 		worldobj   ;assumed we got agent
 		direction  ;assumed we got north, west, wouth, east
 		square
-		wumpus pit gold stench breeze - worldobj
+		;agent wumpus pit gold stench breeze - worldobj
 	)
 
 	(:predicates
-		(sqr-north-of ?sqr ?nsqr)
-		(sqr-west-of  ?sqr ?wsqr)
-		(sqr-south-of ?sqr ?ssqr)
-		(sqr-east-of  ?sqr ?esqr)
-		(safe ?sqr)
-		(maybe-in ?obj ?sqr)
-		(facing ?dir)
-		(in ?obj ?sqr)
+		(sqr-north-of ?sqr ?nsqr - square)
+		(sqr-west-of  ?sqr ?wsqr - square)
+		(sqr-south-of ?sqr ?ssqr - square)
+		(sqr-east-of  ?sqr ?esqr - square)
+		(safe ?sqr - square)
+		(visited ?sqr - square)
+		(maybe-in ?obj - worldobj ?sqr - square)
+		(facing ?dir - direction)
+		(in ?obj -worldobj ?sqr - square)
 	)
 
 	(:action forward
@@ -34,6 +35,7 @@
 		)
 		:precondition (and
 			(in agent ?insqr)
+			(safe ?tosqr)
 			(or
 				(and (facing north) (sqr-north-of ?tosqr ?insqr))
 				(and (facing west)  (sqr-west-of  ?tosqr ?insqr))
@@ -44,9 +46,23 @@
 		:effect (and
 			;move
 			(in agent ?tosqr)
-			(not (in agent ?insqr))
+			(visited ?tosqr)
+			;if no stench/breeze surrounding squares are safe
 
-			;add to maybe in's
+			(when
+				(not (in ?tosqr breeze))
+					(forall(?sqr - square) (
+						(when (sqr-north-of ?tosqr ?sqr) (safe ?sqr) )
+						(when (sqr-west-of ?tosqr ?sqr) (safe ?sqr) )
+						(when (sqr-south-of ?tosqr ?sqr) (safe ?sqr) )
+						(when (sqr-east-of ?tosqr ?sqr) (safe ?sqr) )
+					)
+				)
+			)
+;			(when 
+;				(not (in ?tosqr stench))
+;			)
+			(not (in agent ?insqr))
 		)
 	)
 
