@@ -1,8 +1,9 @@
 from random import choice
+import sys, exceptions
 n = 0
 size = 0
 
-def generate(grid_size):
+def generate(grid_size, n_wumpus, n_pits, n_gold):
   global size
   global n
   size = grid_size
@@ -31,19 +32,26 @@ def generate(grid_size):
   raw_data_objects.append('agent - worldobj ;self')
   
   raw_data_inits.append(';inits due to agent spawning')
-  raw_data_inits.append(p('facing right'))
+  raw_data_inits.append(p('facing east'))
   raw_data_inits.append(p('visited ' + fs(0)))
   raw_data_inits.append(p('safe ' + fs(0)))
   raw_data_inits.append(p('safe ' + fs(1)))
   raw_data_inits.append(p('safe ' + fs(size)))
+  raw_data_inits.append(p('not-in pit ' + fs(0)))
+  raw_data_inits.append(p('not-in wumpus ' + fs(0)))
+  raw_data_inits.append(p('not-in pit ' + fs(1)))
+  raw_data_inits.append(p('not-in wumpus ' + fs(1)))
+  raw_data_inits.append(p('not-in pit ' + fs(size)))
+  raw_data_inits.append(p('not-in wumpus ' + fs(size)))
 
   # Set up world objects
   raw_data_objects.append('north west south east - direction')
-  raw_data_objects.append('p - worldobj ;pits')
-  raw_data_objects.append('w - worldobj ;wumpus')
-  raw_data_objects.append('b - worldobj ;breeze')
-  raw_data_objects.append('s - worldobj ;stench')
-  raw_data_objects.append('gold - worldobj ;that good ol\' gold')
+  raw_data_objects.append('pit     - worldobj')
+  raw_data_objects.append('wumpus  - worldobj')
+  raw_data_objects.append('breeze  - worldobj')
+  raw_data_objects.append('stench  - worldobj')
+  raw_data_objects.append('glimmer - worldobj')
+  raw_data_objects.append('gold    - worldobj ;that good ol\' gold')
    
   # Set up random wampus, gold and pits
   positions = range(n)
@@ -51,18 +59,21 @@ def generate(grid_size):
   del positions[1]
   del positions[0]
 
-  i = choice(positions)
-  spawn_wumpus(i, grid)
+  for k in xrange(n_wumpus):
+    i = choice(positions)
+    spawn_wumpus(i, grid)
 
-  i = choice(positions)
-  spawn_pit(i, grid)
+  for k in xrange(n_pits):
+    i = choice(positions)
+    spawn_pit(i, grid)
 
-  i = choice(positions)
-  grid[i][2].append('gold')
+  for k in xrange(n_gold):
+    i = choice(positions)
+    grid[i][2].append('gold')
 
   # Set up goals
-  raw_data_goals.append(p('facing north'))
-  raw_data_goals.append(p('in agent ' + fs(n-1)))
+  raw_data_goals.append(p('has-gold'))
+  raw_data_goals.append(p('in agent ' + fs(0)))
 
   # Return the whole dataset
   return format_data(raw_data_objects, raw_data_inits, raw_data_goals, grid)
@@ -100,7 +111,7 @@ def format_data(raw_objects, raw_inits, raw_goals, grid):
   for g in raw_goals:
     goals += indent(2) + g + '\n'
   goals = p('and\n' + goals + indent(1)) 
-  goals = indent(1) + p(':goals ' + goals)
+  goals = indent(1) + p(':goal ' + goals)
 
     
 
@@ -115,31 +126,31 @@ def format_data(raw_objects, raw_inits, raw_goals, grid):
   return data
 
 def spawn_wumpus(i, grid):
-  grid[i][2].append('w')
+  grid[i][2].append('wumpus')
 
   if has_north(i):
-    grid[i+size][2].append('s')
+    grid[i+size][2].append('stench')
   if has_west(i):
-    grid[i-1][2].append('s')
+    grid[i-1][2].append('stench')
   if has_south(i):
-    grid[i-size][2].append('s')
+    grid[i-size][2].append('stench')
   if has_east(i):
-    grid[i+1][2].append('s')
+    grid[i+1][2].append('stench')
 
 def spawn_pit(i, grid):
-  grid[i][2].append('p')
+  grid[i][2].append('pit')
 
   if has_north(i):
-    grid[i+size][2].append('b')
+    grid[i+size][2].append('breeze')
   if has_west(i):
-    grid[i-1][2].append('b')
+    grid[i-1][2].append('breeze')
   if has_south(i):
-    grid[i-size][2].append('b')
+    grid[i-size][2].append('breeze')
   if has_east(i):
-    grid[i+1][2].append('b')
+    grid[i+1][2].append('breeze')
 
 def has_north(i):
-  return i < n - size
+  return i < (n - size)
 
 def has_west(i):
   return i % size != 0
@@ -183,5 +194,26 @@ def fs(sqr):
 def p(expr):
   return '(' + expr + ')'
 
+def format_input_error():
+  return ("Run the generator with the command\n" +
+    "python generator.py n w p g\n" +
+    "where\n" +
+    "    n = sqrt(size),  thus n = 4 gives a game of 4x4\n" +
+    "    w = number of wumpuses\n" +
+    "    p = number of pits\n" +
+    "    g = number of gold piles\n")
+    
+
+def main(argv=sys.argv):
+  try:
+    n = int(argv[1])
+    w = int(argv[2])
+    p = int(argv[3])
+    g = int(argv[4])
+    print generate(n, w, p, g)
+  except exceptions.ValueError:
+    print format_input_error()  
+
+
 if __name__ == "__main__":
-  print generate(4)
+	main()

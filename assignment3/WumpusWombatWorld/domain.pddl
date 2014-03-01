@@ -21,11 +21,15 @@
 		(sqr-west-of  ?sqr ?wsqr - square)
 		(sqr-south-of ?sqr ?ssqr - square)
 		(sqr-east-of  ?sqr ?esqr - square)
-		(safe ?sqr - square)
+		
+		(safe    ?sqr - square)
 		(visited ?sqr - square)
-		(maybe-in ?obj - worldobj ?sqr - square)
-		(facing ?dir - direction)
-		(in ?obj -worldobj ?sqr - square)
+		(facing  ?dir - direction)
+		(has-gold)
+		(has-arrow)
+		
+		(in     ?obj - worldobj ?sqr - square)
+		(not-in ?obj - worldobj ?sqr - square)	
 	)
 
 	(:action forward
@@ -46,23 +50,27 @@
 		:effect (and
 			;move
 			(in agent ?tosqr)
-			(visited ?tosqr)
-			;if no stench/breeze surrounding squares are safe
-
-			(when
-				(not (in ?tosqr breeze))
-					(forall(?sqr - square) (
-						(when (sqr-north-of ?tosqr ?sqr) (safe ?sqr) )
-						(when (sqr-west-of ?tosqr ?sqr) (safe ?sqr) )
-						(when (sqr-south-of ?tosqr ?sqr) (safe ?sqr) )
-						(when (sqr-east-of ?tosqr ?sqr) (safe ?sqr) )
-					)
-				)
-			)
-;			(when 
-;				(not (in ?tosqr stench))
-;			)
 			(not (in agent ?insqr))
+			(visited ?tosqr)
+
+			
+			;if no breeze - no pits around
+			(forall (?s - square) (when (and (sqr-north-of ?s ?tosqr) (not (in breeze ?tosqr))) (not-in pit ?s)))
+			(forall (?s - square) (when (and (sqr-west-of  ?s ?tosqr) (not (in breeze ?tosqr))) (not-in pit ?s)))
+			(forall (?s - square) (when (and (sqr-south-of ?s ?tosqr) (not (in breeze ?tosqr))) (not-in pit ?s)))
+			(forall (?s - square) (when (and (sqr-east-of  ?s ?tosqr) (not (in breeze ?tosqr))) (not-in pit ?s)))
+			
+			;if no stench - no wumpus around
+			(forall (?s - square) (when (and (sqr-north-of ?s ?tosqr) (not (in stench ?tosqr))) (not-in wumpus ?s)))
+			(forall (?s - square) (when (and (sqr-west-of  ?s ?tosqr) (not (in stench ?tosqr))) (not-in wumpus ?s)))
+			(forall (?s - square) (when (and (sqr-south-of ?s ?tosqr) (not (in stench ?tosqr))) (not-in wumpus ?s)))
+			(forall (?s - square) (when (and (sqr-east-of  ?s ?tosqr) (not (in stench ?tosqr))) (not-in wumpus ?s)))
+
+			;set square safe if there is no wumpuses or pits in it
+			(forall (?s - square) (when (and (not-in wumpus ?s) (not-in pit ?s)) (safe ?s)))
+			
+			;if glimmer - set glimmer in the square
+			(when (in gold ?tosqr) (in glimmer ?tosqr))
 		)
 	)
 
@@ -82,6 +90,12 @@
 			(when (facing south) (and (facing west)  (not (facing south))))
 			(when (facing east)  (and (facing south) (not (facing east) )))
 		)
+	)
+
+	(:action grab
+		:parameters (?sqr - square)
+		:precondition (in agent ?sqr)
+		:effect (when (in glimmer ?sqr) (has-gold))
 	)
 
 )

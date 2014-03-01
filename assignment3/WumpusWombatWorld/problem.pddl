@@ -6,11 +6,12 @@
 		north west south east - direction
 		s1 s2 s3 s4 s5 s6 s7 s8 s9 s10 s11 s12 - square
 		agent - worldobj 	;self
-		p - worldobj 		;pits
-		w - worldobj 		;wumpus
-		b - worldobj 		;breeze
-		s - worldobj		;stench
+		pit - worldobj 		;pits
+		wumpus - worldobj 		;wumpus
+		breeze - worldobj 		;breeze
+		stench - worldobj		;stench
 		gold - worldobj		;big money honey kaching
+		glimmer - worldobj
 	)
 
 	(:init
@@ -66,17 +67,17 @@
 		(sqr-east-of  s10 s9)
 
 		;square 11
-		(sqr-north-of s6 s7)
-		(sqr-west-of  s6 s12)
-		(sqr-east-of  s6 s10)
+		(sqr-north-of s11 s7)
+		(sqr-west-of  s11 s12)
+		(sqr-east-of  s11 s10)
 
 		;square 12
-		(sqr-north-of s6 s8)
-		(sqr-east-of  s6 s11)
+		(sqr-north-of s12 s8)
+		(sqr-east-of  s12 s11)
 
 
 		;set up character
-		(facing west)
+		(facing east)
 		(in agent s1)
 
 		;visited zones
@@ -84,27 +85,39 @@
 
 		;safe zones (adjecent to agent square (+self))
 		(safe s1)
-		(safe s5)
 		(safe s2)
+		(safe s5)
+    (not-in pit s1)
+    (not-in wumpus s1)
+    (not-in pit s2)
+    (not-in wumpus s2)
+    (not-in pit s5)
+    (not-in wumpus s5)
 
 		;set up wumpus 'w' with surrounding stench 's'
-		(in w s3)
-		(in s s2)
-		(in s s4)
-		(in s s7)
+		(in wumpus s3)
+		(in stench s2)
+		(in stench s4)
+		(in stench s7)
+
+		(in wumpus s6)
+		(in stench s2)
+		(in stench s5)
+		(in stench s7)
+		(in stench s10)
 
 		;set up pits 'p' with surrounding breeze 'b'
-		(in p s9)
-		(in b s10)
-		(in b s5)
+		(in pit s9)
+		(in breeze s10)
+		(in breeze s5)
 
 		;set up gold
-		(in gold s10)
+		(in gold s4)
 	)
 
 	(:goal (and
-		(facing north)
-		(in agent s10)
+		(has-gold)
+		(in agent s1)
 	))
 )
 
