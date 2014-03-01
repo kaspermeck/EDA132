@@ -1,24 +1,18 @@
 import pygame, sys, time
 from pygame.locals import *
 from Board import Board
-from SimpleAI import SimpleAI
 from MinimaxAI import MinimaxAI
-from MinimaxAlphaBetaAI import MinimaxAlphaBetaAI
 from Human import Human
 
 class GUIboard(object):
 	# Load pygame
-	def __init__(self):
+	def __init__(self, timelimit):
 		self.pygame = pygame
 		self.pygame.init()
 		self.fpsClock = pygame.time.Clock()
 		self.board = Board()
-		self.whitePlayer = SimpleAI(self.board, Board.white, 0.5)
-		#self.whitePlayer = Human(self, self.board, Board.white)
-		self.whitePlayer = MinimaxAI(self, self.board, Board.white, 3)
-		#self.whitePlayer = MinimaxAlphaBetaAI(self, self.board, Board.white, 3)
-		self.blackPlayer = MinimaxAI(self, self.board, Board.black, 3)
-		#self.blackPlayer = MinimaxAlphaBetaAI(self, self.board, Board.black, 3)
+		self.whitePlayer = Human(self, self.board, Board.white)
+		self.blackPlayer = MinimaxAI(self, self.board, Board.black, timelimit)
 		self.currentPlayer = self.blackPlayer
 		self.screen = self.drawscreen()
 
@@ -85,5 +79,6 @@ class GUIboard(object):
 				self.currentPlayer = self.whitePlayer
 
 if __name__ == "__main__":
-	GB = GUIboard()
+	timelimit = 3
+	GB = GUIboard(timelimit)
 	GB.rungame()
