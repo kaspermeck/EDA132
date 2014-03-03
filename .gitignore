@@ -1,2 +1,4 @@
 *.pyc
 *.tar
+
+/assignment4/data/*
