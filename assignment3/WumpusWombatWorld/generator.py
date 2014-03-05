@@ -198,22 +198,26 @@ def format_input_error():
   return ("Run the generator with the command\n" +
     "python generator.py n w p g\n" +
     "where\n" +
-    "    n = sqrt(size),  thus n = 4 gives a game of 4x4\n" +
+    "    n = sqrt(size) (minimum 2),  thus n = 4 gives a game of 4x4\n" +
     "    w = number of wumpuses\n" +
     "    p = number of pits\n" +
-    "    g = number of gold piles\n")
+    "    g = number of gold piles (minimum 1)\n")
     
 
 def main(argv=sys.argv):
   try:
-    n = int(argv[1])
-    w = int(argv[2])
-    p = int(argv[3])
-    g = int(argv[4])
-    print generate(n, w, p, g)
+    n = int(argv[1]) if int(argv[1]) >= 2 else 2
+    w = int(argv[2]) if int(argv[2]) >= 0 else 0
+    p = int(argv[3]) if int(argv[3]) >= 0 else 0
+    g = int(argv[4]) if int(argv[4]) >= 1 else 1
   except exceptions.ValueError:
-    print format_input_error()  
+    print format_input_error() 
+    return 
+  except exceptions.IndexError:
+    print format_input_error()
+    return
 
+  print generate(n, w, p, g)
 
 if __name__ == "__main__":
 	main()

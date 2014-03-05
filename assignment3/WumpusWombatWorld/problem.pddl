@@ -100,12 +100,6 @@
 		(in stench s4)
 		(in stench s7)
 
-		(in wumpus s6)
-		(in stench s2)
-		(in stench s5)
-		(in stench s7)
-		(in stench s10)
-
 		;set up pits 'p' with surrounding breeze 'b'
 		(in pit s9)
 		(in breeze s10)
