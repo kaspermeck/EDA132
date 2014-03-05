@@ -1,5 +1,6 @@
 # selects the most common output value among a set of examples
 # input dataset
+import random
 
 def plurality_value(dataSet):
 	p = 0

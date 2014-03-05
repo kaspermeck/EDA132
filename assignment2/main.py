@@ -4,7 +4,8 @@ from DLT import DLT
 
 
 if __name__ == "__main__":
-  dataset = readARFF("weather.nominal.arff")
+  dataset = readARFF("weather.arff")
+
+  #dataset = readARFF("weather.nominal.arff")
   tree = DLT(dataset,dataset)
   tree.printt()
-  

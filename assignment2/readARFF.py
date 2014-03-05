@@ -30,6 +30,7 @@ def readARFF(filename):
 			# do nothing
 			pass
 		elif line.startswith('%'):
+			# remove comments
 			pass
 		elif not readData:
 			line = ''.join(i for i in line if i not in badChars)
@@ -40,10 +41,9 @@ def readARFF(filename):
 			if lineSplit[0] == '@attribute':
 				attribute = lineSplit[1]
 				values = []
-				for i in range(2,len(lineSplit)):
-					values.append(lineSplit[i])
+				for value in range(2,len(lineSplit)):
+					values.append(lineSplit[value])
 				allAttr.append( (attribute, tuple(values)) )
-
 			if lineSplit[0] == '@data':
 				readData = True
 		else:
@@ -53,6 +53,12 @@ def readARFF(filename):
 			lineSplit[-1] = lineSplit[-1].replace('\n', '')
 			dataLine = []
 			for data in lineSplit:
+				try:
+					# try to convert to int
+					data = int(data)
+				except ValueError:
+					# do nothing
+					pass
 				dataLine.append(data)
 			allData.append(tuple(dataLine))
 
