@@ -43,7 +43,7 @@ def readARFF(filename):
 				values = []
 				for value in range(2,len(lineSplit)):
 					values.append(lineSplit[value])
-				allAttr.append( (attribute, tuple(values)) )
+				allAttr.append( [attribute, tuple(values)] )
 			if lineSplit[0] == '@data':
 				readData = True
 		else:
@@ -60,7 +60,7 @@ def readARFF(filename):
 					# do nothing
 					pass
 				dataLine.append(data)
-			allData.append(tuple(dataLine))
+			allData.append(dataLine)
 
 	# associate keyword with value
 	dataSet.update({'attributes': allAttr})

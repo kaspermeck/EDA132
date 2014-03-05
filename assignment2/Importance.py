@@ -27,7 +27,7 @@ def importance(dataset, attr):
     selectedList = getSelectedList(dataset, attr_pos)
 
     gain = getGain(selectedList, attr_values)
-    print selectedList, '\n' ,'gain :', gain, ' attribute :', attr_name
+    #print selectedList, '\n' ,'gain :', gain, ' attribute :', attr_name
 
   # nothing found return false
   return gain
@@ -43,8 +43,6 @@ def getSelectedList(dataset, attr_pos):
 def getGain(selectedList, attr_values):
   gain = 1
   size = len(selectedList)
-  if (isInt(selectedList[0][0])):
-    selectedList, attr_values = convert_from_int(selectedList)
 
   for attr in attr_values:
     pos = neg = 0
@@ -55,35 +53,14 @@ def getGain(selectedList, attr_values):
           pos += 1
         else:
           neg += 1
-        # Subtract the gain if we had any attr_value assigned in the dataset
-        # print "Got pos =", pos, "and neg =", neg, "for", attr_value
-        gain -= (pos+neg)/size * Bfunc(pos/(pos+neg))
+    # Subtract the gain if we had any attr_value assigned in the dataset
+    # print "Got pos =", pos, "and neg =", neg, "for", attr_value
+    if pos+neg > 0:
+      gain -= (pos+neg)/size * Bfunc(pos/(pos+neg))
 
   # gain will be False it attr was not found in the dataser,
   # otherwise it will be the gain.
   return gain
-
-def convert_from_int(selectedList):
-  # sort the list after size
-  selectedList.sort()
-  # find a number to "cut at"
-  size = len(selectedList)
-  weight = 0
-  for value in selectedList:
-    weight += value[0]
-  weight /= size
-
-  # set integers to low/high according to weight
-  newList = []
-  for value in selectedList:
-    if value[0] < weight:
-      newList.append(['low', value[-1]])
-    else:
-      newList.append(['high', value[-1]])
-
-  print newList
-  
-  return newList, ['low', 'high']
 
 def Bfunc(q):
   # val = -(q*log(q) + (1-q)*log(1-q))
@@ -94,12 +71,56 @@ def Bfunc(q):
     val += (1-q)*log(1-q, 2)
   return -val
 
-def isInt(q):
-  try:
-    int(q)
-    return True
-  except ValueError:
-    return False
+
+def compute_split_points_for_reals(dataset):
+  data = dataset['data']
+  attributes = dataset['attributes']
+  
+  for column, attr in enumerate(attributes):
+    if not 'real' in attr[1]:
+      continue
+    
+    # sort the list after value
+    data.sort(key=lambda x: x[column])
+
+    # find split point
+    gains = []
+    for index, item in enumerate(data):
+      # skip the first value (no split at index zero
+      if index == 0:
+        continue
+
+      if item[-1] != data[index-1][-1]:
+        # convert list
+        converted_data = list(data)
+        for i, line in enumerate(converted_data):
+          if i < index:
+            line[column] = 'low'
+          else:
+            line[column] = 'high'
+
+        # create selected list
+        sel_lst = getSelectedList(dataset, column)
+    
+        # split
+        gain = getGain(sel_lst, ('low', 'high'))
+        gains.append([index, gain])
+
+    maxGain = max(gains, key=lambda x: x[1])
+    split = maxGain[0]
+
+    # convert data
+    for i, line in enumerate(data):
+      if i < split:
+        line[column] = 'low'
+      else:
+        line[column] = 'high'
+
+    # convert attribute
+    attributes[column][1] = ('low', 'high')
+
+  # return dataset
+  return dataset
 
 if __name__ == "__main__":
   print importance(ex_dataset, "outlook"),'\n', importance(ex_dataset, "wind")
