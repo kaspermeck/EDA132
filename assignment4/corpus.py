@@ -126,9 +126,9 @@ class Corpus(object):
 		# A bigram is represented as a (key:value) pair: ("POS1++POS2":n)
 
 		bigrams = {}
-		prev_POS = "<s>" # initial POS hack
+		prev_POS = "<s>"
 
-		for sentence in self.sentences:
+		for sentence in self.sentences[1:]:
 			for line in sentence:
 				POS = line['POS']
 				bigram_name = prev_POS + "++" + POS
