@@ -32,32 +32,29 @@ class Corpus(object):
 		self.corpusfile = corpusfile
 		self.sentences = self.extract_sentences()
 		self.words = self.extract_words()
+		self.POSBOS = self.get_number_of_POS_in_BOS()
+		self.bigrams = self.get_bigrams()
 
 	def extract_words(self):
-		# the dictionary with all words
+		with open(self.corpusfile) as f:
+			content = f.readlines()
+		f.close()
+
 		words = {}
 
-		for sentence in self.sentences:
-			for dictword in sentence:
-				# get word and its POS
-				word = dictword['FORM']
-				wordPOS = dictword['POS']
-
-				# word already exists
-				if word in words.keys():
-					# POS type exists, add one to count
-					if wordPOS in words[word].keys():
-						words[word][wordPOS] += 1
-
-					else:
-						words[word][wordPOS] = 1
-
-					words[word]['total'] += 1
-
-				# word doesn't exist, add
+		for line in content:
+			line = line.split()
+			if line:
+				FORM = line[1]
+				POS = line[5]
+				if FORM not in words:
+					words[FORM] = {}
+				if POS not in words[FORM]:
+					words[FORM][POS] = 1
+					words[FORM]['total'] = 1
 				else:
-					# add word and a list of 'total' and POS
-					words[word] = {'total' : 1, wordPOS : 1}
+					words[FORM][POS] += 1
+					words[FORM]['total'] += 1
 
 		return words
 
@@ -67,12 +64,12 @@ class Corpus(object):
 		f.close()
 
 		sentences = []
-
 		sentence = [{'ID':0,'FORM':'<s>','POS':'<s>'}]
 		row = {}
+
 		for line in content:
-			# check if empty line => new sentence
 			line = line.split()
+			# check if empty line => new sentence
 			if not line:
 				sentences.append(sentence)
 				# break; USE BREAK TO CHECK IF CORRECT
@@ -87,7 +84,53 @@ class Corpus(object):
 
 		return sentences
 
+	def get_number_of_POS_in_BOS(self):
+		BOS = {'total':0}
+
+		for sentence in self.sentences:
+			firstPOS = sentence[1]['POS']
+			BOS['total'] += 1
+
+			if firstPOS not in BOS:
+				BOS[firstPOS] = 1
+			else:
+				BOS[firstPOS] += 1
+
+		return BOS
+
+	def get_bigrams(self):
+		# a bigram is how many times POS1 comes before POS2
+		# it will be named: POS1|POS2
+
+		with open(self.corpusfile) as f:
+			content = f.readlines()
+		f.close()
+
+		bigram = {'total': 0}
+		return bigram
+"""
+		POScol = []
+
+		for line in content:
+			line = line.split()
+			if line:
+				POScol.append(line[4])
+			if not line:
+				for POS in POScol[1:]:
+					if POS
+
+
+				POScol = []
+"""
+
+
+
+
+
+
+
 if __name__ == '__main__':
 	corp = Corpus('./data/train.txt')
-	print "print sentences : ", corp.sentences
-	print "print words: ", corp.words
+	print "len sentences : ", len(corp.sentences)
+	print "len words: ", len(corp.words)
+	print "len POSBOS: ", len(corp.POSBOS)
