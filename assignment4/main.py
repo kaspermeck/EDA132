@@ -10,6 +10,6 @@ if __name__ == "__main__":
 	# Baseline tagger
 	tagged_corpus = baseline_tagger(training_corpus, test_file)
 	e.evaluate(tagged_corpus)
-	e.print_stats("Baseline")
+	e.print_stats("Baseline", True)
 
 

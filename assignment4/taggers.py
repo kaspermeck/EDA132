@@ -16,9 +16,10 @@ def baseline_tagger(training_corpus, file_to_tag):
 		if word in corpus.POS_per_FORM:
 			# Return the most common POS for the word given				
 			POSes = corpus.POS_per_FORM[word]
+			POSes = dict(POSes) # make a copy
+			del POSes['total']
 			s = sorted(POSes.iteritems(), key=operator.itemgetter(1), reverse=True)
-			print word, "-->", s
-			return s[1][0] # s[most common POS][POS name]
+			return s[0][0] # s[most common POS][POS name]
 		else:
 			# Return the most common POS overall
 			s = sorted(corpus.POS.iteritems(), key=operator.itemgetter(1), reverse=True)
@@ -31,7 +32,6 @@ def baseline_tagger(training_corpus, file_to_tag):
 			
 			# Set predicted POS
 			line['PPOS'] = most_common_POS(word, training_corpus)
-		break
 	
 	tagged_corpus.time_elapsed = time.clock() - start_time
 	return tagged_corpus
