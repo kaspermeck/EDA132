@@ -51,14 +51,15 @@ class Corpus(object):
 				FORM = line['FORM']
 
 				if FORM not in words:
-					words[FORM] = {'total': 0}
+					words[FORM] = [{}, 0]
+					#words[FORM] = {'total': 0}
 				
-				if POS not in words[FORM]:
-					words[FORM][POS] = 1
+				if POS not in words[FORM][0]:
+					words[FORM][0][POS] = 1
 				else:
-					words[FORM][POS] += 1
+					words[FORM][0][POS] += 1
 				
-				words[FORM]['total'] += 1
+				words[FORM][1] += 1
 
 		return words
 

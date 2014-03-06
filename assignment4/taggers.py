@@ -15,9 +15,9 @@ def baseline_tagger(training_corpus, file_to_tag):
 	def most_common_POS(word, corpus):
 		if word in corpus.POS_per_FORM:
 			# Return the most common POS for the word given				
-			POSes = corpus.POS_per_FORM[word]
-			POSes = dict(POSes) # make a copy
-			del POSes['total']
+			POSes = corpus.POS_per_FORM[word][0]
+			#POSes = dict(POSes) # make a copy
+			#del POSes['total']
 			s = sorted(POSes.iteritems(), key=operator.itemgetter(1), reverse=True)
 			return s[0][0] # s[most common POS][POS name]
 		else:
@@ -45,6 +45,31 @@ def viterbi_tagger(training_corpus, file_to_tag):
 
 	# Algorithm
 
+
+	for sentence in tagged_corpus.sentences:
+		sent = []
+
+		# FIRST
+		line = sentence[1] 
+		word = line['FORM'] #That
+
+		ppf = training_corpus.POS_per_FORM[word]
+		POSes = ppf[0]
+		total = ppf[1]
+		prev_POS = "<s>"
+		sent.append({})
+
+		for POS, value in POSes.iteritems():
+			bigram = prev_POS + "++" + POS
+			bigram_freq = training_corpus.bigrams[bigram] / training_corpus.POS[prev_POS]
+
+			sent[0][POS] = float(value) / total * bigram_freq 
+
+			
+		# REST
+
+
+	return tagged_corpus
 
 if __name__ == "__main__":
 	c = Corpus("data/train.txt")
