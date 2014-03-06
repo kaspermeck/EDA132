@@ -43,16 +43,22 @@ class Evaluator(object):
 
     self.accuracy = float(accurate_sum)/total_taggings
     self.evaluated_tags = tags
+    self.tagged_corpus = tagged_corpus
 
   def print_stats(self, name, individual_tags = False):
     print "===== POS Tagger evaluation ============================="
-    print "  Tagger:", name
-    print "  Accuracy: %1.4f" % self.accuracy
+    print "                       Tagger:", name
+    print "                     Accuracy:" + " %1.4f" % self.accuracy
+    print
+    print "                  Test corpus:", self.tagged_corpus.corpus_file
+    print "              Training corpus:", self.tagged_corpus.training_file
+    print "  Time elapsed during tagging:", self.tagged_corpus.time_elapsed
+    print
 
     if individual_tags:
       print "  Accuracy for individual tags:"
       for POS, data in OrderedDict(sorted(self.evaluated_tags.items())).iteritems():
-        print "       %(tag)-4s %(acc)1.3f" % \
+        print "       %(tag)-4s %(acc)1.4f" % \
               {"tag": POS, "acc": (float(data["accurate"])/data["total"])}
 
     print "========================================================="
