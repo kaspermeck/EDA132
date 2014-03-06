@@ -75,7 +75,7 @@ class Corpus(object):
 			line = line.split()
 			if not line:
 				sentences.append(sentence)
-				break;
+				# break; USE BREAK TO CHECK IF CORRECT
 				sentence = [{'ID':0,'FORM':'<s>','POS':'<s>'}]
 
 			else:
