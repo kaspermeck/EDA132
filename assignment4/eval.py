@@ -44,14 +44,15 @@ class Evaluator(object):
     self.evaluated_tags = tags
     self.tagged_corpus = tagged_corpus
 
-  def print_stats(self, name, individual_tags = False):
+  def print_stats(self, individual_tags = False):
     print "===== POS Tagger evaluation ============================="
-    print "                       Tagger:", name
-    print "                     Accuracy:" + " %1.4f" % self.accuracy
+    print "                       Tagger:", self.tagged_corpus.tagger_name
+    print "                     Accuracy:", "%1.4f" % self.accuracy
     print
     print "                  Test corpus:", self.tagged_corpus.corpus_file
     print "              Training corpus:", self.tagged_corpus.training_file
-    print "  Time elapsed during tagging:", self.tagged_corpus.time_elapsed
+    print "          Evaluated sentences:", len(self.tagged_corpus.sentences)
+    print "  Time elapsed during tagging:", self.tagged_corpus.time_elapsed, "s"
     print
 
     if individual_tags:

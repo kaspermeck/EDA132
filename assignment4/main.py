@@ -10,18 +10,18 @@ if __name__ == "__main__":
 	# Baseline tagger
 	tagged_corpus = baseline_tagger(training_corpus, "data/development.txt", True)
 	e.evaluate(tagged_corpus)
-	e.print_stats("Baseline", False)
+	e.print_stats()
 
 	# Noisy channel tagger
 	#tagged_corpus = noisy_channel_tagger(training_corpus, 'ex_sentence.txt', True, 8)
 	tagged_corpus = noisy_channel_tagger(training_corpus, 'data/development.txt', True, 8)
 	e.evaluate(tagged_corpus)
-	e.print_stats("Noisy channel", False)
+	e.print_stats()
 
 	# Viterbi tagger
 	tagged_corpus = viterbi_tagger(training_corpus, "data/development.txt", True)
 	e.evaluate(tagged_corpus)
-	e.print_stats("Vitebri", False)
+	e.print_stats()
 
 
 

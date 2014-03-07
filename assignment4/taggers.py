@@ -8,6 +8,7 @@ def noisy_channel_tagger(training_corpus, file_to_tag, readPOS, n):
 	# Create a corpus where we overwrite the PPOS
 	tagged_corpus = Corpus(file_to_tag, readPOS)
 	tagged_corpus.training_file = training_corpus.corpus_file
+	tagged_corpus.tagger_name = "Noisy channel tagger"
 	
 	# Extract all sentences of length < n
 	short_sentences = [x for x in tagged_corpus.sentences if len(x) < n]
@@ -59,6 +60,9 @@ def noisy_channel_tagger(training_corpus, file_to_tag, readPOS, n):
 		for i, line in enumerate(sentence):
 			line['PPOS'] = best_path['POS'][i]
 
+	# Save sentences
+	tagged_corpus.sentences = short_sentences
+
 	# Return the now tagged corpus
 	tagged_corpus.time_elapsed = time.clock() - start_time
 	return tagged_corpus
@@ -71,6 +75,7 @@ def viterbi_tagger(training_corpus, file_to_tag, readPOS):
 	# Create a corpus where we overwrite the PPOS
 	tagged_corpus = Corpus(file_to_tag, readPOS)
 	tagged_corpus.training_file = training_corpus.corpus_file
+	tagged_corpus.tagger_name = "Viterbi tagger"
 
 	# Algorithm
 	for sentence in tagged_corpus.sentences:
@@ -157,7 +162,7 @@ def baseline_tagger(training_corpus, file_to_tag, readPOS):
 	# Create a corpus where we overwrite the PPOS
 	tagged_corpus = Corpus(file_to_tag, readPOS)
 	tagged_corpus.training_file = training_corpus.corpus_file
-
+	tagged_corpus.tagger_name = "Baseline tagger"
 
 	# Baseline algortihm:
 	# Tag using the most common POS for that word.
