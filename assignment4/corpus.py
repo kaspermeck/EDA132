@@ -28,18 +28,15 @@ class Corpus(object):
 	"""
 	takes a corpus trainingset as input
 	"""
-	def __init__(self, corpus_file):
+	def __init__(self, corpus_file, readPOS = True):
 		self.corpus_file = corpus_file
+		self.readPOS = readPOS
 		self.sentences = self.extract_sentences()
 		
-		self.POS = self.extract_POS()
-		self.POS_per_FORM = self.extract_POS_per_FORM()
-		self.bigrams = self.extract_bigrams()
-
-		#self.words = self.extract_words()
-		#self.POSBOS = self.get_number_of_POS_in_BOS()
-		#for POS, val in self.POSBOS.iteritems():
-		#	print POS, val
+		if readPOS:		
+			self.POS = self.extract_POS()
+			self.POS_per_FORM = self.extract_POS_per_FORM()
+			self.bigrams = self.extract_bigrams()
 		
 
 	def extract_POS_per_FORM(self):
@@ -101,25 +98,16 @@ class Corpus(object):
 				row = {}
 				row['ID'] = int(line[0])
 				row['FORM'] = line[1]
-				row['POS'] = line[4]
-				row['PPOS'] = line[5]
+				if self.readPOS:
+					row['POS'] = line[4]
+					row['PPOS'] = line[5]
+
 				sentence.append(row)
 
+		# Add last sentence
+		sentences.append(sentence)
+
 		return sentences
-
-	def get_number_of_POS_in_BOS(self):
-		BOS = {'total':0}
-
-		for sentence in self.sentences:
-			firstPOS = sentence[1]['POS']
-			BOS['total'] += 1
-
-			if firstPOS not in BOS:
-				BOS[firstPOS] = 1
-			else:
-				BOS[firstPOS] += 1
-
-		return BOS
 
 	def extract_bigrams(self):
 		# A bigram is all a tuple (POS(i-1), POS(i)), i.e. previous POS followed
@@ -148,7 +136,7 @@ class Corpus(object):
 
 
 if __name__ == '__main__':
-	stmt = "corp = Corpus('./data/train.txt')"
+	stmt = "corp = Corpus('./ex_sentence.txt')"
 	time = timeit.timeit(stmt, setup="from __main__ import Corpus", number=1)
 
 	print "Time spent reading corpus:", time

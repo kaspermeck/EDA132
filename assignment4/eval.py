@@ -30,7 +30,6 @@ class Evaluator(object):
           tags[POS]["accurate"] += 1
         else:
           tags[POS]["error_pairs"].append( (POS, line['PPOS']) )
-          #print "ERROR: On line", i, "=>", line['PPOS'], "should be", POS
 
         # Increase the total times the POS has been seen
         tags[POS]["total"] += 1

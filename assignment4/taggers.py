@@ -4,7 +4,7 @@ def viterbi_tagger(training_corpus, file_to_tag):
 	start_time = time.clock()
 
 	# Create a corpus where we overwrite the PPOS
-	tagged_corpus = Corpus(file_to_tag)
+	tagged_corpus = Corpus(file_to_tag, False)
 	tagged_corpus.training_file = training_corpus.corpus_file
 
 	# Algorithm
@@ -108,7 +108,7 @@ def baseline_tagger(training_corpus, file_to_tag):
 	start_time = time.clock()
 	
 	# Create a corpus where we overwrite the PPOS
-	tagged_corpus = Corpus(file_to_tag)
+	tagged_corpus = Corpus(file_to_tag, False)
 	tagged_corpus.training_file = training_corpus.corpus_file
 
 
