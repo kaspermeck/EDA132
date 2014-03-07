@@ -64,14 +64,60 @@ class Evaluator(object):
     print "========================================================="
     print ""
 
-  def print_confusion_matrix(self, name):
-    matrix = [[0 for key in self.tags.keys()] for key in self.tags.keys()]
+  def write_confusion_matrix(self, filename):
+    tags = OrderedDict(sorted(self.evaluated_tags.items()))
+
+    # Create a zero matrix
+    matrix = [[0 for key in tags.keys()] for key in tags.keys()]
+
+    # Insert correctly tagged elements
+    for i, (POS, data) in enumerate(tags.iteritems()):
+      matrix[i][i] = data["accurate"]
+       
+
+    # Insert error pairs
+    for row_index, (row_POS, data) in enumerate(tags.iteritems()):
+      if not data['error_pairs']:
+        pass
+      else:
+        # Go thru all error pairs and increase error hit
+        for (should_be, tagged_as) in data['error_pairs']:
+          for col_index, col_POS in enumerate(tags.keys()):
+            if should_be == row_POS and tagged_as == col_POS:
+              matrix[row_index][col_index] += 1
+
+
+    # Insert axis names
+    matrix.insert(0, ["%5s" % key for key in tags.keys()])
+    matrix[0].insert(0, ' '*5)
+    for i, key in enumerate(tags.keys()):
+      matrix[i+1].insert(0, "%-5s" % key) # i+1 because first row is axis name
+
+    # Convert number to strings
+    for i, row in enumerate(matrix[1:]):
+      for j, col in enumerate(row[1:]):
+        matrix[i+1][j+1] = "%5d" % col if col != 0 else "%5s" % '.'
+
+    # Create print string
+    matrix_string = ""
+    for row in matrix:
+      for col in row:
+        matrix_string += col
+      matrix_string += "\n"
+
+
+    # Output the print string
+    #print matrix_string
+    text_file = open(filename, "w")
+    text_file.write(matrix_string)
+    text_file.close()
 
 
 
 if __name__ == "__main__":
-  c = Corpus("data/train.txt")
+  c = Corpus("ex_sentence.txt")
   
   e = Evaluator()
   e.evaluate(c)
-  e.print_stats("Test", True)
+  e.print_confusion_matrix("hej")
+  #e.print_stats("Test", True)
