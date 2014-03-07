@@ -2,3 +2,4 @@
 *.tar
 
 /assignment4/data/*
+assignment4/*_conf_m.txt
