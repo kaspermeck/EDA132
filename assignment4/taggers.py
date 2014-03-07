@@ -1,10 +1,75 @@
 import operator, time
 from corpus import *
-def viterbi_tagger(training_corpus, file_to_tag):
+
+
+def noisy_channel_tagger(training_corpus, file_to_tag, readPOS, n):
+	start_time = time.clock()
+	
+	# Create a corpus where we overwrite the PPOS
+	tagged_corpus = Corpus(file_to_tag, readPOS)
+	tagged_corpus.training_file = training_corpus.corpus_file
+	
+	# Extract all sentences of length < n
+	short_sentences = [x for x in tagged_corpus.sentences if len(x) < n]
+
+	# Recursive function which uses hidden markov model
+	def recursive(sentence, prev_POS, probability, n):
+		if n == 0:
+			#Reached end of sentence
+			return {'value': probability, 'POS': []}
+		else:
+			word = sentence[0]['FORM'] # front word of the sentence
+
+			# Extract POS list for current word
+			if word in training_corpus.POS_per_FORM:
+				ppf = training_corpus.POS_per_FORM[word]
+				POSes = ppf[0]
+				total_words = ppf[1]
+			else:
+				s = sorted(training_corpus.POS.iteritems(), key=operator.itemgetter(1), reverse=True)
+				POSes = {s[0][0]: 1}
+				total_words = 1
+
+			best_path = {'value': 0}
+			for POS, value in POSes.iteritems():
+				P_word_given_POS = float(value) / total_words
+
+				bigram = prev_POS + "++" + POS
+				if bigram in training_corpus.bigrams:
+					P_bigram = float(training_corpus.bigrams[bigram]) / training_corpus.POS[prev_POS]
+				else:
+					# quite low ?
+					P_bigram = 0.01
+
+				prob = P_word_given_POS * P_bigram
+
+				path = recursive(sentence[1:], POS, probability*prob, n-1)
+
+				if path['value'] > best_path['value']:
+					best_path = path
+					best_path['POS'].insert(0, POS)
+
+			return best_path
+
+	# Recursive call 
+	for sentence in short_sentences:
+		best_path = recursive(sentence, '<s>', 1, len(sentence))
+		
+		# Assign the computed POS tags to their words
+		for i, line in enumerate(sentence):
+			line['PPOS'] = best_path['POS'][i]
+
+	# Return the now tagged corpus
+	tagged_corpus.time_elapsed = time.clock() - start_time
+	return tagged_corpus
+
+
+
+def viterbi_tagger(training_corpus, file_to_tag, readPOS):
 	start_time = time.clock()
 
 	# Create a corpus where we overwrite the PPOS
-	tagged_corpus = Corpus(file_to_tag, False)
+	tagged_corpus = Corpus(file_to_tag, readPOS)
 	tagged_corpus.training_file = training_corpus.corpus_file
 
 	# Algorithm
@@ -86,28 +151,11 @@ def viterbi_tagger(training_corpus, file_to_tag):
 	tagged_corpus.time_elapsed = time.clock() - start_time
 	return tagged_corpus
 
-def noisy_channel_tagger(training_corpus, file_to_tag):
+def baseline_tagger(training_corpus, file_to_tag, readPOS):
 	start_time = time.clock()
 	
 	# Create a corpus where we overwrite the PPOS
-	tagged_corpus = Corpus(file_to_tag, False)
-	tagged_corpus.training_file = training_corpus.corpus_file
-
-	# only use sentences that are length max n
-	n = 9
-	# or else it takes too long time
-	short_sentences = [x for x in tagged_corpus.sentences if len(x) < n]
-
-	def recursive(sentence, ):
-	
-
-	return tagged_corpus
-
-def baseline_tagger(training_corpus, file_to_tag):
-	start_time = time.clock()
-	
-	# Create a corpus where we overwrite the PPOS
-	tagged_corpus = Corpus(file_to_tag, False)
+	tagged_corpus = Corpus(file_to_tag, readPOS)
 	tagged_corpus.training_file = training_corpus.corpus_file
 
 

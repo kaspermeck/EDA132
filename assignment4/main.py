@@ -8,14 +8,20 @@ if __name__ == "__main__":
 	e = Evaluator()
 
 	# Baseline tagger
-	#tagged_corpus = baseline_tagger(training_corpus, test_file)
-	#e.evaluate(tagged_corpus)
-	#e.print_stats("Baseline", False)
+	tagged_corpus = baseline_tagger(training_corpus, "data/development.txt", True)
+	e.evaluate(tagged_corpus)
+	e.print_stats("Baseline", False)
+
+	# Noisy channel tagger
+	#tagged_corpus = noisy_channel_tagger(training_corpus, 'ex_sentence.txt', True, 8)
+	tagged_corpus = noisy_channel_tagger(training_corpus, 'data/development.txt', True, 8)
+	e.evaluate(tagged_corpus)
+	e.print_stats("Noisy channel", False)
 
 	# Viterbi tagger
-	#tagged_corpus = viterbi_tagger(training_corpus, "ex_sentence.txt")
-	#e.evaluate(tagged_corpus)
-	#e.print_stats("Vitebri", True)
+	tagged_corpus = viterbi_tagger(training_corpus, "data/development.txt", True)
+	e.evaluate(tagged_corpus)
+	e.print_stats("Vitebri", False)
 
 
 
@@ -30,8 +36,7 @@ if __name__ == "__main__":
 	#e.evaluate(tagged_corpus)
 	#e.print_stats("Vitebri", False)
 
-	# noisy channel
-	tagged_corpus = noisy_channel_tagger(training_corpus, 'data/development.txt')
+
 
 
 
