@@ -99,7 +99,7 @@ class Corpus(object):
 				sentence.append(BOS_row)
 			else:
 				row = {}
-				row['ID'] = line[0]
+				row['ID'] = int(line[0])
 				row['FORM'] = line[1]
 				row['POS'] = line[4]
 				row['PPOS'] = line[5]
