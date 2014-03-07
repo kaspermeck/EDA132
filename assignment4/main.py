@@ -13,9 +13,9 @@ if __name__ == "__main__":
 	#e.print_stats("Baseline", False)
 
 	# Viterbi tagger
-	tagged_corpus = viterbi_tagger(training_corpus, "ex_sentence.txt")
-	e.evaluate(tagged_corpus)
-	e.print_stats("Vitebri", True)
+	#tagged_corpus = viterbi_tagger(training_corpus, "ex_sentence.txt")
+	#e.evaluate(tagged_corpus)
+	#e.print_stats("Vitebri", True)
 
 
 
@@ -26,9 +26,13 @@ if __name__ == "__main__":
 	#e.print_stats("Vitebri", False)
 
 	# Viterbi tagger
-	tagged_corpus = viterbi_tagger(training_corpus, "data/test.txt")
-	e.evaluate(tagged_corpus)
-	e.print_stats("Vitebri", False)
+	#tagged_corpus = viterbi_tagger(training_corpus, "data/test.txt")
+	#e.evaluate(tagged_corpus)
+	#e.print_stats("Vitebri", False)
+
+	# noisy channel
+	tagged_corpus = noisy_channel_tagger(training_corpus, 'data/development.txt')
+
 
 
 

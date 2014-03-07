@@ -8,10 +8,7 @@ def viterbi_tagger(training_corpus, file_to_tag):
 	tagged_corpus.training_file = training_corpus.corpus_file
 
 	# Algorithm
-
-
 	for sentence in tagged_corpus.sentences:
-
 		# SETUP FIRST
 		trellis = {}
 		line = sentence[0] 
@@ -52,6 +49,7 @@ def viterbi_tagger(training_corpus, file_to_tag):
 					if bigram in training_corpus.bigrams:
 						P_bigram = float(training_corpus.bigrams[bigram]) / training_corpus.POS[prev_POS]
 					else:
+						# quite low ?
 						P_bigram = 0.01
 
 					P_value = value*P_bigram
@@ -74,34 +72,35 @@ def viterbi_tagger(training_corpus, file_to_tag):
 			trellis = trellis_new
 
 		# End of sentence: assign PPOS for sentence
-		#for key, value in trellis.iteritems():
-		#	print "POS for last word", key, "P()", value['value']
-
 		s = sorted(trellis.iteritems(), key=lambda item: item[1], reverse=True)
-
-		#print "SORTED YEEEEEEEEEEEEEEEEEEEAAAAAAAAAAAAAAAHHHHHHHHH"
-		#for pair in s:
-		#	print "POS for last word", pair[0], "P()", pair[1]['value']
 
 		prev_path = {s[0][0]: s[0][1]}
 		ID = sentence[-1]['ID']
-		
-		#print 'prev_path=', prev_path, 'id=', ID, 'POS=', POS
-		#print prev_path
 
 		while prev_path != None:
 			POS = prev_path.keys()[0]
 			sentence[ID]['PPOS'] = POS
-		#	print 
-		#	print "==== Word:", sentence[ID]['FORM']
-		#	print "Predicted:", POS
-		#	print "Should be:", sentence[ID]['POS']
-
 			prev_path = prev_path[POS]['prev_path']
 			ID -= 1
-		
 
 	tagged_corpus.time_elapsed = time.clock() - start_time
+	return tagged_corpus
+
+def noisy_channel_tagger(training_corpus, file_to_tag):
+	start_time = time.clock()
+	
+	# Create a corpus where we overwrite the PPOS
+	tagged_corpus = Corpus(file_to_tag, False)
+	tagged_corpus.training_file = training_corpus.corpus_file
+
+	# only use sentences that are length max n
+	n = 9
+	# or else it takes too long time
+	short_sentences = [x for x in tagged_corpus.sentences if len(x) < n]
+
+	def recursive(sentence, ):
+	
+
 	return tagged_corpus
 
 def baseline_tagger(training_corpus, file_to_tag):
