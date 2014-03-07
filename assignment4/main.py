@@ -8,9 +8,9 @@ if __name__ == "__main__":
 	e = Evaluator()
 
 	# Baseline tagger
-	#tagged_corpus = baseline_tagger(training_corpus, test_file)
-	#e.evaluate(tagged_corpus)
-	#e.print_stats("Baseline", True)
+	tagged_corpus = baseline_tagger(training_corpus, test_file)
+	e.evaluate(tagged_corpus)
+	e.print_stats("Baseline", True)
 
 	# Viterbi tagger
 	tagged_corpus = viterbi_tagger(training_corpus, test_file)

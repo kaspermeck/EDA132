@@ -46,14 +46,16 @@ def viterbi_tagger(training_corpus, file_to_tag):
 				
 				# All P(ti|ti-1)
 				P_POS_given_prevPOS = {}
-				for prev_POS in trellis.keys():
+				for prev_POS in trellis:
+					value = trellis[prev_POS]['value']
 					bigram = prev_POS + "++" + POS
 					if bigram in training_corpus.bigrams:
 						P_bigram = float(training_corpus.bigrams[bigram]) / training_corpus.POS[prev_POS]
 					else:
 						P_bigram = 0.01
 
-					P_POS_given_prevPOS[prev_POS] = P_bigram
+					P_value = value*P_bigram
+					P_POS_given_prevPOS[prev_POS] = P_value
 
 				# P(word|ti) * max(P(ti|ti-1)
 				maxBigram = max(P_POS_given_prevPOS)
