@@ -1,33 +1,6 @@
 import timeit
-"""
-extracts a list of distinct words and 
-their frequencies from a training set.
-Extracts a list of distinct parts of 
-speech (POS) and their frequencies 
-from a training set.
-
-self.sentences = 
-[
-[{'ID':n, 'FORM':'word', 'POS':'pos'}],
-[{'ID':n, 'FORM':'word', 'POS':'pos'}],
-...,
-[{'ID':n, 'FORM':'word', 'POS':'pos'}]
-]
-
-self.words =
-{
-'word1' : {'total':n, 'POS1':m, ..., 'POSL':l},
-'word2' : {'total':n, 'POS1':m, ..., 'POSL':l},
-...,
-'wordLAST' : {'total':n, 'POS1':m, ..., 'POSL':l}
-}
-
-"""
 
 class Corpus(object):
-	"""
-	takes a corpus trainingset as input
-	"""
 	def __init__(self, corpus_file, readPOS = True):
 		self.corpus_file = corpus_file
 		self.readPOS = readPOS
@@ -133,6 +106,20 @@ class Corpus(object):
 
 		return bigrams
 
+	def write_conll(self, filename):
+		text_file = open(filename, "w")
+
+		print_string = ""
+		for sentence in self.sentences:
+			for line in sentence[1:]:
+				print_string += `line['ID']` + "\t" +  line['FORM'] + "\t" + line['PPOS'] + "\n"
+			print_string += "\n"
+		print_string = print_string[:-2] #trim last newline
+
+		text_file.write(print_string)
+		text_file.close()
+
+	
 
 
 if __name__ == '__main__':

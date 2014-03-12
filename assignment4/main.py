@@ -25,18 +25,9 @@ if __name__ == "__main__":
 	e.print_stats()
 	e.write_confusion_matrix("vitebri_conf_m.txt")
 
-
-
-	
 	# Viterbi tagger
-	#tagged_corpus = viterbi_tagger(training_corpus, test_file)
-	#e.evaluate(tagged_corpus)
-	#e.print_stats("Vitebri", False)
-
-	# Viterbi tagger
-	#tagged_corpus = viterbi_tagger(training_corpus, "data/test.txt")
-	#e.evaluate(tagged_corpus)
-	#e.print_stats("Vitebri", False)
+	tagged_corpus = viterbi_tagger(training_corpus, "data/test.txt", False)
+	tagged_corpus.write_conll("testset_tagged.txt")
 
 
 

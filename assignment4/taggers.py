@@ -109,7 +109,7 @@ def viterbi_tagger(training_corpus, file_to_tag, readPOS):
 			trellis_new = {}
 			for POS, count in POSes_for_word.iteritems():
 				# P(word|ti)
-				P_word_given_POS = float(count) / total_words
+				P_word_given_POS = float(count) / training_corpus.POS[POS]#total_words
 				
 				# All P(ti|ti-1)
 				P_POS_given_prevPOS = {}
